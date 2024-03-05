@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { extractPrice } from "../utils";
+import { extractCurrency, extractPrice } from "../utils";
 export async function scrapeAmazonProduct(productUrl: string) {
   if (!productUrl) return;
 
@@ -30,7 +30,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
       $(".a.size.base.a-color-price"),
       $(".a-button-selected .a-color-base"),
       $(".a-price.a-text-price .a-offscreen"),
-      $("a-price-whole")
+      $(".a-price-whole")
     );
     const originalPriceText = extractPrice(
       $("#priceblock_ourprice"),
@@ -42,13 +42,22 @@ export async function scrapeAmazonProduct(productUrl: string) {
     const outOfStock =
       $("#availability span").text().trim().toLowerCase() ===
       "currently unavailable";
-    const image =
+    const images =
       $("#imgBlkFront").attr("data-a-dynamic-image") ||
       $("#landingImage").attr("data-a-dynamic-image") ||
       "{}";
+    const currency = extractCurrency($(".a-price-symbol"));
+    const imageUrls = Object.keys(JSON.parse(images));
     const currentPrice = parseFloat(currentPriceText).toFixed(2);
     const originalPrice = parseFloat(originalPriceText).toFixed(2);
-    console.log({ title, currentPrice, originalPrice, outOfStock, image });
+    console.log({
+      title,
+      currentPrice,
+      originalPrice,
+      outOfStock,
+      imageUrls,
+      currency,
+    });
   } catch (error) {
     console.log("Failed to scrape from bright data", error);
   }
