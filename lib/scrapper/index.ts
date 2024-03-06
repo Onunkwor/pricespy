@@ -59,15 +59,17 @@ export async function scrapeAmazonProduct(productUrl: string) {
     const reviewsCount = $("#acrCustomerReviewText")
       .text()
       .trim()
+      .replace(/[,]/g, "")
       .split(" ")
       .slice(0, 1)
       .join("");
-    const stars = $('[data-hook="rating-out-of-text"]')
+    const starsFloat = $('[data-hook="rating-out-of-text"]')
       .text()
       .trim()
       .split(" ")
       .slice(0, 1)
       .join("");
+    const stars = parseFloat(starsFloat).toFixed();
     const imageUrls = Object.keys(JSON.parse(images));
     const description = $("#feature-bullets")
       .text()
@@ -90,14 +92,16 @@ export async function scrapeAmazonProduct(productUrl: string) {
       priceHistory: [],
       discountRate: Number(discountRate),
       category,
-      reviewsCount,
-      stars,
+      reviewsCount: Number(reviewsCount),
+      stars: Number(stars),
       isOutOfStock: outOfStock,
       description,
       lowestPrice: Number(currentPrice) || Number(originalPrice),
       highestPrice: Number(originalPrice) || Number(currentPrice),
       averagePrice: Number(currentPrice) || Number(originalPrice),
     };
+    console.log(data);
+
     return data;
   } catch (error) {
     console.log("Failed to scrape from bright data", error);

@@ -78,7 +78,7 @@
   }
 
   .product-stars {
-    @apply flex items-center gap-2 px-3 py-2 bg-[#FBF3EA] rounded-[27px];
+    @apply flex items-center gap-1 px-3 py-2 bg-[#FBF3EA] rounded-[27px];
   }
 
   .product-reviews {
@@ -130,7 +130,7 @@
   }
 
   .product-card_img-container {
-    @apply flex-1 relative flex flex-col gap-5 p-4 rounded-md;
+    @apply flex-1 relative flex flex-col gap-5 p-4 rounded-md justify-center items-center;
   }
 
   .product-card_img {

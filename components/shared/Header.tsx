@@ -10,9 +10,9 @@ const Header = () => {
         <Link href="/" className="flex items center gap-1">
           <Image
             src="/assets/icons/logo.svg"
+            width={27}
             height={27}
             alt="logo"
-            width={27}
           />
           <p className="nav-logo">
             Pay<span className="text-primary">Spy</span>
