@@ -62,24 +62,22 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .split(" ")
       .slice(0, 1)
       .join("");
-    // const starsText = $(".a-icon-row span.a-size-base").text().trim();
-    // const stars = parseFloat(starsText).toFixed(1);
+    const stars = $('[data-hook="rating-out-of-text"]')
+      .text()
+      .trim()
+      .split(" ")
+      .slice(0, 1)
+      .join("");
     const imageUrls = Object.keys(JSON.parse(images));
+    const description = $("#feature-bullets")
+      .text()
+      .trim()
+      .replace(/[n]/g, "")
+      .split(/\s{2,}/)
+      .slice(1)
+      .filter((desc) => desc !== "Show more");
     const currentPrice = parseFloat(currentPriceText).toFixed(2);
     const originalPrice = parseFloat(originalPriceText).toFixed(2);
-
-    console.log({
-      title,
-      currentPrice,
-      originalPrice,
-      outOfStock,
-      imageUrls,
-      currency,
-      discountRate,
-      category,
-      reviewsCount,
-      // stars,
-    });
 
     //Construct data object with scrapped information
     const data = {
@@ -87,11 +85,20 @@ export async function scrapeAmazonProduct(productUrl: string) {
       currency: currency || "$",
       image: imageUrls[0],
       title,
-      currentPrice: Number(currentPrice),
-      originalPrice: Number(originalPrice),
+      currentPrice: Number(currentPrice) || Number(originalPrice),
+      originalPrice: Number(originalPrice) || Number(currentPrice),
       priceHistory: [],
       discountRate: Number(discountRate),
+      category,
+      reviewsCount,
+      stars,
+      isOutOfStock: outOfStock,
+      description,
+      lowestPrice: Number(currentPrice) || Number(originalPrice),
+      highestPrice: Number(originalPrice) || Number(currentPrice),
+      averagePrice: Number(currentPrice) || Number(originalPrice),
     };
+    return data;
   } catch (error) {
     console.log("Failed to scrape from bright data", error);
   }
