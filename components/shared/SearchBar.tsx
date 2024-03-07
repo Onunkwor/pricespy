@@ -1,6 +1,6 @@
 "use client";
-
 import { scrapeAndStoreProduct } from "@/lib/actions";
+import { redirect } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 const SearchBar = () => {
@@ -30,6 +30,9 @@ const SearchBar = () => {
 
       //Scrape product
       const product = await scrapeAndStoreProduct(query);
+      // if (!product) return;
+
+      // redirect(`/products/${product._id}`);
     } catch (error) {
       console.log(error);
     } finally {

@@ -21,12 +21,14 @@ export async function scrapeAmazonProduct(productUrl: string) {
   try {
     //fetch the product page
     const response = await axios.get(productUrl, options);
+    console.log(response);
+
     const $ = cheerio.load(response.data);
 
     //Extract data
     const title = $("#productTitle").text().trim();
     const currentPriceText = extractPrice(
-      $(".priceToPay span.a-price-whole"),
+      $(".priceToPay"),
       $(".a.size.base.a-color-price"),
       $(".a-button-selected .a-color-base"),
       $(".a-price.a-text-price .a-offscreen"),
@@ -79,8 +81,12 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .slice(1)
       .filter((desc) => desc !== "Show more");
     const currentPrice = parseFloat(currentPriceText).toFixed(2);
-    const originalPrice = parseFloat(originalPriceText).toFixed(2);
-
+    const originalPrice = Number(parseFloat(originalPriceText).toFixed(2));
+    const recommendationText = $("#histogramTable td.a-text-right.a-nowrap")
+      .text()
+      .trim()
+      .split("%")[0];
+    const recommendations = parseInt(recommendationText);
     //Construct data object with scrapped information
     const data = {
       productUrl,
@@ -88,7 +94,11 @@ export async function scrapeAmazonProduct(productUrl: string) {
       image: imageUrls[0],
       title,
       currentPrice: Number(currentPrice) || Number(originalPrice),
-      originalPrice: Number(originalPrice) || Number(currentPrice),
+      originalPrice: Number.isNaN(originalPrice)
+        ? Number(currentPrice)
+        : Number(originalPrice) < Number(currentPrice)
+        ? Number(currentPrice)
+        : Number(originalPrice),
       priceHistory: [],
       discountRate: Number(discountRate),
       category,
@@ -97,8 +107,13 @@ export async function scrapeAmazonProduct(productUrl: string) {
       isOutOfStock: outOfStock,
       description,
       lowestPrice: Number(currentPrice) || Number(originalPrice),
-      highestPrice: Number(originalPrice) || Number(currentPrice),
+      highestPrice: Number.isNaN(originalPrice)
+        ? Number(currentPrice)
+        : Number(originalPrice) < Number(currentPrice)
+        ? Number(currentPrice)
+        : Number(originalPrice),
       averagePrice: Number(currentPrice) || Number(originalPrice),
+      recommendations,
     };
     console.log(data);
 

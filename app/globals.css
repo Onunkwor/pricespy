@@ -37,7 +37,7 @@
   }
 
   .hero-carousel {
-    @apply relative sm:px-10 py-5 sm:pt-20 pb-5 max-w-[560px] h-[700px] w-full bg-[#F2F4F7] rounded-[30px] sm:mx-auto object-contain;
+    @apply relative sm:px-10 py-5 sm:pt-20 pb-5 max-w-[560px] h-[700px] w-full bg-[#F2F4F7] rounded-[30px] sm:mx-auto;
   }
 
   .carousel {
@@ -78,7 +78,7 @@
   }
 
   .product-stars {
-    @apply flex items-center gap-1 px-3 py-2 bg-[#FBF3EA] rounded-[27px];
+    @apply flex items-center gap-2 px-3 py-2 bg-[#FBF3EA] rounded-[27px];
   }
 
   .product-reviews {
@@ -130,7 +130,7 @@
   }
 
   .product-card_img-container {
-    @apply flex-1 relative flex flex-col gap-5 p-4 rounded-md justify-center items-center;
+    @apply flex-1 relative flex flex-col gap-5 p-4 rounded-md;
   }
 
   .product-card_img {
@@ -149,4 +149,8 @@
   .searchbar-btn {
     @apply bg-gray-900 border border-gray-900 rounded-lg shadow-xs px-5 py-3 text-white text-base font-semibold hover:opacity-90 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40;
   }
+}
+
+.input-field {
+  @apply h-[54px] focus-visible:ring-offset-0  rounded-full px-4 py-3 border-none focus-visible:ring-transparent !important;
 }

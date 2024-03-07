@@ -23,6 +23,7 @@ export type Product = {
   category: string;
   reviewsCount: number;
   stars: number;
+  recommendations: number;
   isOutOfStock: Boolean;
   users?: User[];
 };

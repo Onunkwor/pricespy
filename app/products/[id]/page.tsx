@@ -1,4 +1,7 @@
-import { getProductByProductId } from "@/lib/actions";
+import ProductCard from "@/components/ProductCard";
+import Modal from "@/components/shared/Modal";
+import PriceInfoCard from "@/components/shared/PriceInfoCard";
+import { getProductByProductId, getSimilarProducts } from "@/lib/actions";
 import { Product } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,9 +12,8 @@ interface Props {
 }
 const ProductDetails = async ({ params: { id } }: Props) => {
   const product: Product = await getProductByProductId(id);
-  console.log(product);
-
   if (!product) redirect("/");
+  const similarProduct = await getSimilarProducts(id);
   return (
     <div className="product-container">
       <div className="flex gap-28 xl:flex-row flex-col">
@@ -104,10 +106,78 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                   </p>
                 </div>
               </div>
+              <p className="text-sm text-black opacity-50">
+                <span className="text-primary-green font-semibold">
+                  {product.recommendations}%
+                </span>{" "}
+                of buyers have recommended this.
+              </p>
             </div>
           </div>
+          <div className="my-7 flex flex-col gap-5">
+            <div className="flex gap-5 flex-wrap">
+              <PriceInfoCard
+                title="Current Price"
+                iconSrc="/assets/icons/price-tag.svg"
+                value={`${product.currency} ${product.currentPrice}`}
+                borderColor="#b6dbff"
+              />
+              <PriceInfoCard
+                title="Average Price"
+                iconSrc="/assets/icons/chart.svg"
+                value={`${product.currency} ${product.averagePrice}`}
+                borderColor="#b6dbff"
+              />
+              <PriceInfoCard
+                title="Highest Price"
+                iconSrc="/assets/icons/arrow-up.svg"
+                value={`${product.currency} ${product.highestPrice}`}
+                borderColor="#b6dbff"
+              />
+              <PriceInfoCard
+                title="Lowest Price"
+                iconSrc="/assets/icons/arrow-down.svg"
+                value={`${product.currency} ${product.lowestPrice}`}
+                borderColor="#b6dbff"
+              />
+            </div>
+          </div>
+          <Modal productId={id} />
         </div>
       </div>
+      <div className="flex flex-col gap-16">
+        <div className="flex flex-col gap-5">
+          <h3 className="text-2xl text-secondary font-semi-bold">
+            Product Description
+          </h3>
+          <ul className="flex flex-col gap-4 px-4">
+            {product.description.map((item, index) => {
+              return (
+                <li key={index} className="list-disc">
+                  {item}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <button className="btn w-fit mx-auto flex items-center">
+          <Image src="/assets/icons/bag.svg" alt="bag" width={22} height={22} />{" "}
+          <Link href={product.productUrl} target="_blank">
+            Buy Now
+          </Link>
+        </button>
+      </div>
+      {similarProduct && similarProduct?.length > 0 && (
+        <div className="py-14 flex flex-col gap-2 w-full">
+          <p className="section-text">Similar Products</p>
+
+          <div className="flex flex-wrap gap-10 mt-7 w-full">
+            {similarProduct.map((item) => (
+              <ProductCard key={item._id} product={item} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
