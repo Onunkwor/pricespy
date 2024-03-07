@@ -11,7 +11,6 @@ export const connectToDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "PriceSpy",
-      bufferCommands: false, //doesn't send mongoDb commands in batches
     });
     isConnected = true;
     console.log("MongoDb connection established");
