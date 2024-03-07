@@ -63,13 +63,16 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .split(" ")
       .slice(0, 1)
       .join("");
-    const starsFloat = $('[data-hook="rating-out-of-text"]')
-      .text()
-      .trim()
-      .split(" ")
-      .slice(0, 1)
-      .join("");
-    const stars = parseFloat(starsFloat).toFixed();
+    const starsFloat = parseFloat(
+      $('[data-hook="rating-out-of-text"]')
+        .text()
+        .trim()
+        .split(" ")
+        .slice(0, 1)
+        .join("")
+    );
+    const stars = Math.round(starsFloat);
+
     const imageUrls = Object.keys(JSON.parse(images));
     const description = $("#feature-bullets")
       .text()
