@@ -38,11 +38,10 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .filter(
         (num) => num !== "with" && num !== "percent" && num !== "savings"
       );
-    if (priceArr.length === 0 || priceArr[0] === "") {
-      console.log(priceArr);
-
-      return;
-    }
+    // if (priceArr.length === 0 || priceArr[0] === "") {
+    //   console.log(priceArr);
+    //   return;
+    // }
     const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
     const currentPriceText = priceArr[0]
       .split("")
