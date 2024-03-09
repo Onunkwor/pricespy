@@ -36,7 +36,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
         (num) => num !== "with" && num !== "percent" && num !== "savings"
       );
     if (priceArr.length === 0 || priceArr[0] === "") {
-      // Display toast message
       return;
     }
     // const currentPriceText = extractPrice(
