@@ -10,10 +10,6 @@ import {
 } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-// export const maxDuration = 120; // Cache for 2 minutes
-// export const dynamic = "force-dynamic";
-// export const revalidate = 60; // Revalidate every 1 minute
-
 export async function GET() {
   try {
     await connectToDB();
