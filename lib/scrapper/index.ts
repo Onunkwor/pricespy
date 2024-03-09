@@ -47,13 +47,17 @@ export async function scrapeAmazonProduct(productUrl: string) {
     //   $(".a-price-whole")
     // );
     const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
-    const currentPrice = Number(
-      priceArr[0]
-        .split("")
-        .slice(1)
-        .filter((item) => item !== ",")
-        .join("")
-    );
+    const currentPriceText = priceArr[0]
+      .split("")
+      .slice(1)
+      .filter((item) => item !== ",")
+      .join("");
+
+    // Ensure currentPriceText is a valid number
+    const currentPrice = isNaN(parseFloat(currentPriceText))
+      ? 0 // Assign a default value if currentPriceText is not a valid number
+      : Number(parseFloat(currentPriceText).toFixed(2));
+
     const originalPrice = (currentPrice / (1 - discountRate / 100)).toFixed(2);
     // const originalPriceText = extractPrice(
     //   $("#priceblock_ourprice"),
