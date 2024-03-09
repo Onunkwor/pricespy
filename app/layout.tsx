@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/shared/Header";
-
+import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 const SpaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -27,6 +27,7 @@ export default function RootLayout({
           <Header />
           {children}
         </main>
+        <Toaster richColors className="absolute top-2 right-2" />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { extractCurrency, extractPrice } from "../utils";
+import { extractCurrency } from "../utils";
 export async function scrapeAmazonProduct(productUrl: string) {
   if (!productUrl) return;
 
@@ -25,20 +25,44 @@ export async function scrapeAmazonProduct(productUrl: string) {
 
     //Extract data
     const title = $("#productTitle").text().trim();
-    const currentPriceText = extractPrice(
-      $(".priceToPay"),
-      $(".a.size.base.a-color-price"),
-      $(".a-button-selected .a-color-base"),
-      $(".a-price.a-text-price .a-offscreen"),
-      $(".a-price-whole")
+    const priceArr = $("#corePriceDisplay_desktop_feature_div div span")
+      .text()
+      .trim()
+      .split(/\s{4,}/)
+      .slice(0, 1)
+      .join("")
+      .split(" ")
+      .filter(
+        (num) => num !== "with" && num !== "percent" && num !== "savings"
+      );
+    if (priceArr.length === 0 || priceArr[0] === "") {
+      // Display toast message
+      return;
+    }
+    // const currentPriceText = extractPrice(
+    //   $(".priceToPay"),
+    //   $(".a.size.base.a-color-price"),
+    //   $(".a-button-selected .a-color-base"),
+    //   $(".a-price.a-text-price .a-offscreen"),
+    //   $(".a-price-whole")
+    // );
+    const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
+    const currentPrice = Number(
+      priceArr[0]
+        .split("")
+        .slice(1)
+        .filter((item) => item !== ",")
+        .join("")
     );
-    const originalPriceText = extractPrice(
-      $("#priceblock_ourprice"),
-      $(".a-price.a-text-price span.a-offscreen"),
-      $("#listPrice"),
-      $("#priceblock_dealprice"),
-      $(".a-size-base.a-color-price")
-    );
+    const originalPrice = (currentPrice / (1 - discountRate / 100)).toFixed(2);
+    // const originalPriceText = extractPrice(
+    //   $("#priceblock_ourprice"),
+    //   $(".a-price.a-text-price span.a-offscreen"),
+    //   $("#listPrice"),
+    //   $("#priceblock_dealprice"),
+    //   $(".a-size-base.a-color-price")
+    // );
+
     const outOfStock =
       $("#availability span").text().trim().toLowerCase() ===
       "currently unavailable";
@@ -47,7 +71,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
       $("#landingImage").attr("data-a-dynamic-image") ||
       "{}";
     const currency = extractCurrency($(".a-price-symbol"));
-    const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
+    // const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
     const category = $("span.a-list-item a.a-link-normal.a-color-tertiary")
       .text()
       .trim()
@@ -81,8 +105,17 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .split(/\s{2,}/)
       .slice(1)
       .filter((desc) => desc !== "Show more");
-    const currentPrice = parseFloat(currentPriceText).toFixed(2);
-    const originalPrice = Number(parseFloat(originalPriceText).toFixed(2));
+    const descAlt = $("ul.a-unordered-list.a-vertical .a-list-item")
+      .text()
+      .trim()
+      .replace(/[\n+]/g, "")
+      .split(/\s{4,}/)
+      .slice(0, 1)
+      .join("")
+      .split(".");
+
+    // const currentPrice = parseFloat(currentPriceText).toFixed(2);
+    // const originalPrice = Number(parseFloat(originalPriceText).toFixed(2));
     const recommendationText = $("#histogramTable td.a-text-right.a-nowrap")
       .text()
       .trim()
@@ -94,27 +127,37 @@ export async function scrapeAmazonProduct(productUrl: string) {
       currency: currency || "$",
       image: imageUrls[0],
       title,
-      currentPrice: Number(currentPrice) || Number(originalPrice),
-      originalPrice: Number.isNaN(originalPrice)
-        ? Number(currentPrice)
-        : Number(originalPrice) < Number(currentPrice)
-        ? Number(currentPrice)
-        : Number(originalPrice),
+      currentPrice: Number(currentPrice),
+      // originalPrice: Number.isNaN(originalPrice)
+      //   ? Number(currentPrice)
+      //   : Number(originalPrice) < Number(currentPrice)
+      //   ? Number(currentPrice)
+      //   : Number(originalPrice),
+      originalPrice: Number(originalPrice),
       priceHistory: [],
       discountRate: Number(discountRate),
       category,
       reviewsCount: Number(reviewsCount),
       stars: Number(stars) || 0,
       isOutOfStock: outOfStock,
-      description,
-      lowestPrice: Number(currentPrice) || Number(originalPrice),
-      highestPrice: Number.isNaN(originalPrice)
-        ? Number(currentPrice)
-        : Number(originalPrice) < Number(currentPrice)
-        ? Number(currentPrice)
-        : Number(originalPrice),
+      description:
+        description.length > 0
+          ? description
+          : descAlt.length > 0
+          ? descAlt
+          : ["Check website for Product Details"],
+
+      // lowestPrice: Number(currentPrice) || Number(originalPrice),
+      lowestPrice: Number(currentPrice),
+      // highestPrice: Number.isNaN(originalPrice)
+      //   ? Number(currentPrice)
+      //   : Number(originalPrice) < Number(currentPrice)
+      //   ? Number(currentPrice)
+      //   : Number(originalPrice),
+      highestPrice: Number(originalPrice),
       averagePrice: Number(currentPrice) || Number(originalPrice),
       recommendations,
+      // priceArr,
     };
     console.log(data);
 

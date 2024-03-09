@@ -1,8 +1,9 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
+import { Product } from "@/types";
 import { redirect } from "next/navigation";
 import { FormEvent, useState } from "react";
-
+import { toast } from "sonner";
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,9 +31,13 @@ const SearchBar = () => {
 
       //Scrape product
       const product = await scrapeAndStoreProduct(query);
-      // if (!product) return;
-
-      // redirect(`/products/${product._id}`);
+      if (!product) {
+        toast.error("Failed to fetch product. Please try a different URL.");
+      } else {
+        // Convert Mongoose document to plain object
+        let id = product._id.toString();
+        redirect(`/products/${id}`);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -51,6 +56,11 @@ const SearchBar = () => {
       <button type="submit" className="searchbar-btn" disabled={query === ""}>
         {loading ? "Searching..." : "Search"}
       </button>
+      <p className="text-xs font-bold opacity-50">
+        Note: Some Amazon product pages may not be compatible with our scraper.
+        If you encounter issues with books, please try a different product
+        category or provide a direct link to the product.
+      </p>
     </form>
   );
 };
