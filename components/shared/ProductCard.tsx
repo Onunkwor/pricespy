@@ -9,7 +9,7 @@ interface ProductProps {
 const ProductCard = ({ product }: ProductProps) => {
   return (
     <Link href={`/products/${product._id}`} className="product-card">
-      <div className="product-card_img-container">
+      <div className="product-card_img-container flex items-center justify-center">
         <Image
           src={product.image}
           alt="product image"

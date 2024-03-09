@@ -1,4 +1,4 @@
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/shared/ProductCard";
 import HeroCarousel from "@/components/shared/HeroCarousel";
 import SearchBar from "@/components/shared/SearchBar";
 import { getAllProducts } from "@/lib/actions";
