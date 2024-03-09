@@ -33,10 +33,6 @@ const SearchBar = () => {
       const product = await scrapeAndStoreProduct(query);
       if (!product) {
         toast.error("Failed to fetch product. Please try a different URL.");
-      } else {
-        // Convert Mongoose document to plain object
-        let id = product._id.toString();
-        redirect(`/products/${id}`);
       }
     } catch (error) {
       console.log(error);
