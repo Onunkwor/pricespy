@@ -2,7 +2,10 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { extractCurrency } from "../utils";
 export async function scrapeAmazonProduct(productUrl: string) {
-  if (!productUrl) return;
+  if (!productUrl) {
+    console.log("Invalid product url");
+    return;
+  }
 
   //BrightData proxy configuration
   const username = String(process.env.BRIGHT_DATA_USERNAME);
@@ -36,15 +39,10 @@ export async function scrapeAmazonProduct(productUrl: string) {
         (num) => num !== "with" && num !== "percent" && num !== "savings"
       );
     if (priceArr.length === 0 || priceArr[0] === "") {
+      console.log(priceArr);
+
       return;
     }
-    // const currentPriceText = extractPrice(
-    //   $(".priceToPay"),
-    //   $(".a.size.base.a-color-price"),
-    //   $(".a-button-selected .a-color-base"),
-    //   $(".a-price.a-text-price .a-offscreen"),
-    //   $(".a-price-whole")
-    // );
     const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
     const currentPriceText = priceArr[0]
       .split("")
@@ -58,14 +56,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
       : Number(parseFloat(currentPriceText).toFixed(2));
 
     const originalPrice = (currentPrice / (1 - discountRate / 100)).toFixed(2);
-    // const originalPriceText = extractPrice(
-    //   $("#priceblock_ourprice"),
-    //   $(".a-price.a-text-price span.a-offscreen"),
-    //   $("#listPrice"),
-    //   $("#priceblock_dealprice"),
-    //   $(".a-size-base.a-color-price")
-    // );
-
     const outOfStock =
       $("#availability span").text().trim().toLowerCase() ===
       "currently unavailable";
@@ -74,7 +64,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
       $("#landingImage").attr("data-a-dynamic-image") ||
       "{}";
     const currency = extractCurrency($(".a-price-symbol"));
-    // const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
     const category = $("span.a-list-item a.a-link-normal.a-color-tertiary")
       .text()
       .trim()
@@ -99,7 +88,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
         .join("")
     );
     const stars = Math.round(starsFloat);
-
     const imageUrls = Object.keys(JSON.parse(images));
     const description = $("#feature-bullets")
       .text()
@@ -116,9 +104,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .slice(0, 1)
       .join("")
       .split(".");
-
-    // const currentPrice = parseFloat(currentPriceText).toFixed(2);
-    // const originalPrice = Number(parseFloat(originalPriceText).toFixed(2));
     const recommendationText = $("#histogramTable td.a-text-right.a-nowrap")
       .text()
       .trim()
@@ -131,11 +116,6 @@ export async function scrapeAmazonProduct(productUrl: string) {
       image: imageUrls[0],
       title,
       currentPrice: Number(currentPrice),
-      // originalPrice: Number.isNaN(originalPrice)
-      //   ? Number(currentPrice)
-      //   : Number(originalPrice) < Number(currentPrice)
-      //   ? Number(currentPrice)
-      //   : Number(originalPrice),
       originalPrice: Number(originalPrice),
       priceHistory: [],
       discountRate: Number(discountRate),
@@ -149,21 +129,12 @@ export async function scrapeAmazonProduct(productUrl: string) {
           : descAlt.length > 0
           ? descAlt
           : ["Check website for Product Details"],
-
-      // lowestPrice: Number(currentPrice) || Number(originalPrice),
       lowestPrice: Number(currentPrice),
-      // highestPrice: Number.isNaN(originalPrice)
-      //   ? Number(currentPrice)
-      //   : Number(originalPrice) < Number(currentPrice)
-      //   ? Number(currentPrice)
-      //   : Number(originalPrice),
       highestPrice: Number(originalPrice),
       averagePrice: Number(currentPrice) || Number(originalPrice),
       recommendations,
-      // priceArr,
     };
     console.log(data);
-
     return data;
   } catch (error) {
     console.log("Failed to scrape from bright data", error);
