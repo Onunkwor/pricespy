@@ -42,28 +42,49 @@ export function getHighestPrice(priceList: PriceHistoryItem[]) {
   let highestPrice = priceList[0];
 
   for (let i = 0; i < priceList.length; i++) {
-    if (priceList[i].price > highestPrice.price) {
+    if (priceList[i].originalPrice > highestPrice.originalPrice) {
       highestPrice = priceList[i];
     }
   }
 
-  return highestPrice.price;
+  return highestPrice.originalPrice;
 }
 
 export function getLowestPrice(priceList: PriceHistoryItem[]) {
-  let lowestPrice = priceList[0];
+  // Filter out items with zero current price
+  const filteredPriceList = priceList.filter((item) => item.currentPrice !== 0);
 
+  // If all prices are zero or the price list is empty after filtering, return zero
+  if (filteredPriceList.length === 0) {
+    return 0;
+  }
+
+  // Initialize lowestPrice with the first non-zero price
+  let lowestPrice = filteredPriceList[0];
   for (let i = 0; i < priceList.length; i++) {
-    if (priceList[i].price < lowestPrice.price) {
+    if (priceList[i].currentPrice < lowestPrice.currentPrice) {
       lowestPrice = priceList[i];
     }
   }
 
-  return lowestPrice.price;
+  return lowestPrice.currentPrice;
 }
 
 export function getAveragePrice(priceList: PriceHistoryItem[]) {
-  const sumOfPrices = priceList.reduce((acc, curr) => acc + curr.price, 0);
+  // Filter out items with zero current price
+  const filteredPriceList = priceList.filter(
+    (item) => item.originalPrice !== 0
+  );
+
+  // If all prices are zero or the price list is empty after filtering, return zero
+  if (filteredPriceList.length === 0) {
+    return 0;
+  }
+
+  const sumOfPrices = filteredPriceList.reduce(
+    (acc, curr) => acc + curr.originalPrice,
+    0
+  );
   const averagePrice = sumOfPrices / priceList.length || 0;
 
   return averagePrice;
@@ -85,126 +106,3 @@ export const getEmailNotificationType = (
     return Notification.THRESHOLD_MET as keyof typeof Notification;
   }
 };
-
-// const options = {
-//   url: "http://lumtest.com/myip.json",
-//   proxy: super_proxy,
-//   rejectUnauthorized: false,
-// };
-// const proxyUrl = `http://${username}-session-${session_id}:${password}@brd.superproxy.io:${port}`;
-//fetch the product page
-// const response = await axios.get(productUrl, options);
-// const $ = cheerio.load(response.data);
-
-//Extract data
-// const title = $("#productTitle").text().trim();
-// console.log(title);
-
-// const priceArr = $("#corePriceDisplay_desktop_feature_div div span")
-//   .text()
-//   .trim()
-//   .split(/\s{4,}/)
-//   .slice(0, 1)
-//   .join("")
-//   .split(" ")
-//   .filter(
-//     (num) => num !== "with" && num !== "percent" && num !== "savings"
-//   );
-
-// if (priceArr.length === 0 || priceArr[0] === "") {
-//   return;
-// }
-// const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
-// const currentPriceText = priceArr[0]
-//   .split("")
-//   .slice(1)
-//   .filter((item) => item !== ",")
-//   .join("");
-
-// // Ensure currentPriceText is a valid number
-// const currentPrice = isNaN(parseFloat(currentPriceText))
-//   ? 0 // Assign a default value if currentPriceText is not a valid number
-//   : Number(parseFloat(currentPriceText).toFixed(2));
-
-// const originalPrice = (currentPrice / (1 - discountRate / 100)).toFixed(2);
-// const outOfStock =
-//   $("#availability span").text().trim().toLowerCase() ===
-//   "currently unavailable";
-// const images =
-//   $("#imgBlkFront").attr("data-a-dynamic-image") ||
-//   $("#landingImage").attr("data-a-dynamic-image") ||
-//   "{}";
-// const currency = extractCurrency($(".a-price-symbol"));
-// const category = $("span.a-list-item a.a-link-normal.a-color-tertiary")
-//   .text()
-//   .trim()
-//   .replace(/[\n+]/g, "")
-//   .split(/\s{2,}/)
-//   .filter((word) => word.trim() !== "")
-//   .slice(-2)
-//   .join("");
-// const reviewsCount = $("#acrCustomerReviewText")
-//   .text()
-//   .trim()
-//   .replace(/[,]/g, "")
-//   .split(" ")
-//   .slice(0, 1)
-//   .join("");
-// const starsFloat = parseFloat(
-//   $('[data-hook="rating-out-of-text"]')
-//     .text()
-//     .trim()
-//     .split(" ")
-//     .slice(0, 1)
-//     .join("")
-// );
-// const stars = Math.round(starsFloat);
-// const imageUrls = Object.keys(JSON.parse(images));
-// const description = $("#feature-bullets")
-//   .text()
-//   .trim()
-//   .replace(/[n]/g, "")
-//   .split(/\s{2,}/)
-//   .slice(1)
-//   .filter((desc) => desc !== "Show more");
-// const descAlt = $("ul.a-unordered-list.a-vertical .a-list-item")
-//   .text()
-//   .trim()
-//   .replace(/[\n+]/g, "")
-//   .split(/\s{4,}/)
-//   .slice(0, 1)
-//   .join("")
-//   .split(".");
-// const recommendationText = $("#histogramTable td.a-text-right.a-nowrap")
-//   .text()
-//   .trim()
-//   .split("%")[0];
-// const recommendations = parseInt(recommendationText);
-// //Construct data object with scrapped information
-// const data = {
-//   productUrl,
-//   currency: currency || "$",
-//   image: imageUrls[0],
-//   title,
-//   currentPrice: Number(currentPrice),
-//   originalPrice: Number(originalPrice),
-//   priceHistory: [],
-//   discountRate: Number(discountRate),
-//   category,
-//   reviewsCount: Number(reviewsCount),
-//   stars: Number(stars) || 0,
-//   isOutOfStock: outOfStock,
-//   description:
-//     description.length > 0
-//       ? description
-//       : descAlt.length > 0
-//       ? descAlt
-//       : ["Check website for Product Details"],
-//   lowestPrice: Number(currentPrice),
-//   highestPrice: Number(originalPrice),
-//   averagePrice: Number(currentPrice) || Number(originalPrice),
-//   recommendations,
-//   priceArr,
-// };
-// console.log(data);
-// return data;

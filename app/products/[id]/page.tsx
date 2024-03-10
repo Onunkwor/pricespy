@@ -17,7 +17,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
   return (
     <div className="product-container">
       <div className="flex gap-28 xl:flex-row flex-col">
-        <div>
+        <div className="flex items-center justify-center">
           <Image
             src={product.image}
             alt={product.title}
@@ -28,7 +28,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
         <div className="flex-1 flex flex-col">
           <div className="flex justify-between items-start gap-5 flex-wrap pb-6">
             <div className="flex flex-col gap-3">
-              <p className="text-[28px] text-secondary font-semibold">
+              <p className="text-[28px] text-secondary font-semibold text-wrap">
                 {product.title}
               </p>
               <Link
@@ -115,7 +115,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
             </div>
           </div>
           <div className="my-7 flex flex-col gap-5">
-            <div className="flex gap-5 flex-wrap">
+            <div className="gap-5 flex flex-wrap">
               <PriceInfoCard
                 title="Current Price"
                 iconSrc="/assets/icons/price-tag.svg"
@@ -150,7 +150,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           <h3 className="text-2xl text-secondary font-semi-bold">
             Product Description
           </h3>
-          <ul className="flex flex-col gap-4 px-4">
+          {/* <ul className="flex flex-col gap-4 px-4">
             {product.description.map((item, index) => {
               return (
                 <li key={index} className="list-disc">
@@ -158,7 +158,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                 </li>
               );
             })}
-          </ul>
+          </ul> */}
         </div>
         <button className="btn w-fit mx-auto flex items-center">
           <Image src="/assets/icons/bag.svg" alt="bag" width={22} height={22} />{" "}

@@ -1,5 +1,7 @@
 export type PriceHistoryItem = {
-  price: number;
+  currentPrice: number;
+  originalPrice: number;
+  discount: number;
 };
 
 export type User = {

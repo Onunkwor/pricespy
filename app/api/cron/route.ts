@@ -25,15 +25,31 @@ export async function GET() {
         if (!scrapedProduct) throw new Error("No product found");
         const updatedPriceHistory = [
           ...currentProduct.priceHistory,
-          { price: scrapedProduct.currentPrice },
+          {
+            currentPrice: currentProduct.currentPrice, // Use existing current price
+            originalPrice: currentProduct.originalPrice, // Use existing original price
+            discount: currentProduct.discountRate, // Use existing discount rate
+          },
         ];
-
+        const currentPrice = scrapedProduct.currentPrice;
+        const originalPrice = scrapedProduct.originalPrice;
+        const discountRate = scrapedProduct.discountRate;
         const product = {
           ...scrapedProduct,
           priceHistory: updatedPriceHistory,
           lowestPrice: getLowestPrice(updatedPriceHistory),
           highestPrice: getHighestPrice(updatedPriceHistory),
           averagePrice: getAveragePrice(updatedPriceHistory),
+          currentPrice:
+            currentPrice === 0
+              ? updatedPriceHistory[0].currentPrice
+              : currentPrice,
+          originalPrice:
+            originalPrice === 0
+              ? updatedPriceHistory[0].originalPrice
+              : originalPrice,
+          discountRate:
+            discountRate === 0 ? updatedPriceHistory[0].discount : discountRate,
         };
         const updatedProduct = await Product.findOneAndUpdate(
           { productUrl: product.productUrl },

@@ -35,7 +35,7 @@ function Modal({ productId }: Props) {
       <DialogTrigger asChild>
         <button className="btn">Track</button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-white ">
+      <DialogContent className="w-fit bg-white ">
         <DialogHeader>
           <DialogTitle>
             <Image

@@ -2,6 +2,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { extractCurrency, extractPrice } from "../utils";
+import { PriceHistoryItem } from "@/types";
 
 export async function scrapeAmazonProduct(productUrl: string) {
   if (!productUrl) {
@@ -123,16 +124,16 @@ export async function scrapeAmazonProduct(productUrl: string) {
       .trim()
       .split("%")[0];
     const recommendations = parseInt(recommendationText);
-
+    const priceHistory: PriceHistoryItem[] = [];
     // Construct data object with scrapped information
     const data = {
       productUrl,
       currency: currency || "$",
       image: imageUrls[0],
       title,
-      currentPrice: Number(currentPrice),
       originalPrice: Number(originalPrice),
       priceHistory: [],
+      currentPrice: Number(currentPrice),
       discountRate: Number(discountRate),
       category,
       reviewsCount: Number(reviewsCount),

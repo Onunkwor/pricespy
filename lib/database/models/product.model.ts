@@ -11,7 +11,9 @@ const productSchema = new mongoose.Schema(
     averagePrice: { type: Number },
     priceHistory: [
       {
-        price: { type: Number, required: true },
+        currentPrice: { type: Number, required: true },
+        originalPrice: { type: Number, required: true },
+        discount: { type: Number, required: true },
         date: { type: Date, default: Date.now },
       },
     ],
