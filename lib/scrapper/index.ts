@@ -32,7 +32,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
     const priceSelectors = [
       "#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center.aok-relative",
       "#corePriceDisplay_mobile_feature_div > div.a-section.a-spacing-none.aok-align-center.aok-relative",
-      "span.a-price-whole",
+      ".a-price span.a-price-whole",
     ];
     let attempts = 0;
     const maxAttempts = 20; // Set a maximum number of attempts

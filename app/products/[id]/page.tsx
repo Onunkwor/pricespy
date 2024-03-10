@@ -150,7 +150,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           <h3 className="text-2xl text-secondary font-semi-bold">
             Product Description
           </h3>
-          {/* <ul className="flex flex-col gap-4 px-4">
+          <ul className="flex flex-col gap-4 px-4">
             {product.description.map((item, index) => {
               return (
                 <li key={index} className="list-disc">
@@ -158,7 +158,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                 </li>
               );
             })}
-          </ul> */}
+          </ul>
         </div>
         <button className="btn w-fit mx-auto flex items-center">
           <Image src="/assets/icons/bag.svg" alt="bag" width={22} height={22} />{" "}
