@@ -33,6 +33,8 @@ const SearchBar = () => {
       const product = await scrapeAndStoreProduct(query);
       if (!product) {
         toast.error("Failed to fetch product. Please try a different URL.");
+      } else {
+        toast.success("Product added successfully");
       }
     } catch (error) {
       console.log(error);

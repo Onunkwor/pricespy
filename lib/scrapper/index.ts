@@ -32,6 +32,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
     const priceSelectors = [
       "#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center.aok-relative",
       "#corePriceDisplay_mobile_feature_div > div.a-section.a-spacing-none.aok-align-center.aok-relative",
+      "span.a-price-whole",
     ];
     let attempts = 0;
     const maxAttempts = 20; // Set a maximum number of attempts
@@ -56,7 +57,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
       }
       attempts++;
     }
-    if (priceArr[1] === "") {
+    if (priceArr[0] === "") {
       return;
     }
     // Extract other data after priceArr is available
@@ -64,8 +65,7 @@ export async function scrapeAmazonProduct(productUrl: string) {
     const discountRate = priceArr[1] ? parseInt(priceArr[1]) : 0;
     const currentPriceText = priceArr[0]
       .split("")
-      .slice(1)
-      .filter((item) => item !== ",")
+      .filter((item) => item !== "," && item !== "$")
       .join("");
     const currentPrice = isNaN(parseFloat(currentPriceText))
       ? 0
